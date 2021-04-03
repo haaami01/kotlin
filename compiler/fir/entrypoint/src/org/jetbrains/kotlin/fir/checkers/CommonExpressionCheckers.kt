@@ -103,4 +103,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirStandaloneQualifierChecker,
         )
+
+    override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
+        get() = setOf(
+            FirEqualityCompatibilityChecker,
+        )
 }
