@@ -6,6 +6,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
@@ -15,10 +16,11 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChange
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.UnknownSnapshot
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
 import java.io.File
 import java.util.jar.JarFile
 import javax.inject.Inject
@@ -26,7 +28,9 @@ import javax.inject.Inject
 @CacheableTask
 abstract class KaptTask @Inject constructor(
     objectFactory: ObjectFactory
-): ConventionTask(), TaskWithLocalState {
+): ConventionTask(),
+    TaskWithLocalState,
+    UsesKotlinJavaToolchain {
     init {
         cacheOnlyIfEnabledForKotlin()
 
@@ -102,6 +106,9 @@ abstract class KaptTask @Inject constructor(
     val classpath: FileCollection by project.provider {
         kotlinCompileTask.classpath
     }
+
+    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
+        objectFactory.propertyWithNewInstance()
 
     @Suppress("unused", "DeprecatedCallableAddReplaceWith")
     @Deprecated(

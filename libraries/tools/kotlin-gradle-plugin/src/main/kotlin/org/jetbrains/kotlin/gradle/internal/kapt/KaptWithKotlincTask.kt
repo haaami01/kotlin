@@ -28,8 +28,7 @@ import javax.inject.Inject
 abstract class KaptWithKotlincTask @Inject constructor(
     objectFactory: ObjectFactory
 ) : KaptTask(objectFactory),
-    CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
-    UsesKotlinJavaToolchain {
+    CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
@@ -40,9 +39,6 @@ abstract class KaptWithKotlincTask @Inject constructor(
 
     @get:Internal
     val taskProvider = GradleCompileTaskProvider(this)
-
-    final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchainProvider> =
-        objectFactory.propertyWithNewInstance()
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
